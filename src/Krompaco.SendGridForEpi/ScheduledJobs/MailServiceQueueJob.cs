@@ -1,7 +1,6 @@
 ﻿namespace Krompaco.SendGridForEpi.ScheduledJobs
 {
     using System;
-    using System.Diagnostics;
     using System.Net;
     using System.Text;
 
@@ -10,7 +9,7 @@
 
     using Services;
 
-    [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", DefaultEnabled = false, GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to an archive.")]
+    [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", DefaultEnabled = false, GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
     public class MailServiceQueueJob : ScheduledJobBase
     {
         private readonly IMailService mailService;
