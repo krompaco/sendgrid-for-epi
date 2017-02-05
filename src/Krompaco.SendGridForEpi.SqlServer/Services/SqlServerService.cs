@@ -19,10 +19,10 @@
         public void CreateTablesIfNeeded()
         {
             const string Script = @"IF NOT EXISTS(SELECT * FROM sys.objects
-WHERE object_id = OBJECT_ID(N'[dbo].[sendgridforepi_MailQueue]') AND type in (N'U'))
+WHERE object_id = OBJECT_ID(N'[dbo].[SendGridForEpiMailQueue]') AND type in (N'U'))
 BEGIN
 
-CREATE TABLE [dbo].[sendgridforepi_MailQueue]
+CREATE TABLE [dbo].[SendGridForEpiMailQueue]
 (
 	[MailQueueId] [bigint] IDENTITY(1,1) NOT NULL,
 	[Date] [datetime] NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE [dbo].[sendgridforepi_MailQueue]
 	[LastAttempt] [datetime] NOT NULL,
 	[Attempts] [int] NOT NULL,
 	[AttemptMessage] [nvarchar](max) NULL,
-	CONSTRAINT [PK_sendgridforepi_MailQueue] PRIMARY KEY CLUSTERED
+	CONSTRAINT [PK_SendGridForEpiMailQueue] PRIMARY KEY CLUSTERED
 (
 	[MailQueueId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -42,10 +42,10 @@ CREATE TABLE [dbo].[sendgridforepi_MailQueue]
 END
 
 IF NOT EXISTS(SELECT * FROM sys.objects
-WHERE object_id = OBJECT_ID(N'[dbo].[sendgridforepi_MailQueueArchive]') AND type in (N'U'))
+WHERE object_id = OBJECT_ID(N'[dbo].[SendGridForEpiMailQueueArchive]') AND type in (N'U'))
 BEGIN
 
-CREATE TABLE [dbo].[sendgridforepi_MailQueueArchive]
+CREATE TABLE [dbo].[SendGridForEpiMailQueueArchive]
 (
 	[MailQueueId] [bigint] NOT NULL,
 	[Date] [datetime] NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE [dbo].[sendgridforepi_MailQueueArchive]
 	[LastAttempt] [datetime] NOT NULL,
 	[Attempts] [int] NOT NULL,
 	[AttemptMessage] [nvarchar](max) NULL,
-	CONSTRAINT [PK_sendgridforepi_MailQueueArchive] PRIMARY KEY CLUSTERED 
+	CONSTRAINT [PK_SendGridForEpiMailQueueArchive] PRIMARY KEY CLUSTERED 
 (
 	[MailQueueId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

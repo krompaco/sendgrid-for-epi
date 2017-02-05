@@ -1,0 +1,2 @@
+nuget pack ..\src\Krompaco.SendGridForEpi\Krompaco.SendGridForEpi.csproj -properties Configuration=Release
+nuget pack ..\src\Krompaco.SendGridForEpi.SqlServer\Krompaco.SendGridForEpi.SqlServer.csproj -properties Configuration=Release

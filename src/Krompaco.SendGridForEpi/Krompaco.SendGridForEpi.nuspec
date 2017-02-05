@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>Krompaco.SendGridForEpi</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>Johan Kronberg</authors>
-    <owners>Johan Kronberg</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
-    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Service and a Epi scheduled job that handles queued SendGrid API POSTs.</description>
-    <releaseNotes>First release.</releaseNotes>
-    <copyright>Copyright 2017</copyright>
-    <tags>EPiServer SendGrid</tags>
-    <dependencies>
-      <dependency id="EPiServer.CMS.UI.Core" version="[9.0.0, 11.0.0)" />
-      <dependency id="Sendgrid" version="[8.0.5, 9.0.0)" />
-    </dependencies>
-  </metadata>
+	<metadata>
+		<id>Krompaco.SendGridForEpi</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>Johan Kronberg</authors>
+		<owners>Johan Kronberg</owners>
+		<licenseUrl>https://github.com/krompaco/sendgrid-for-epi/blob/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/krompaco/sendgrid-for-epi</projectUrl>
+		<iconUrl>http://krompaco.nu/globalassets/nuget/logo.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Service and a Epi scheduled job that handles queued SendGrid API POSTs.</description>
+		<releaseNotes>First release.</releaseNotes>
+		<copyright>Copyright 2017</copyright>
+		<tags>EPiServer SendGrid</tags>
+		<dependencies>
+			<dependency id="EPiServer.CMS.UI.Core" version="[10.3.2, 11.0.0)" />
+			<dependency id="Sendgrid" version="[8.0.5, 9.0.0)" />
+		</dependencies>
+	</metadata>
 </package>

@@ -63,7 +63,7 @@
     <Folder Include="Tables" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\sendgridforepi_MailQueue.sql" />
-    <Build Include="Tables\sendgridforepi_MailQueueArchive.sql" />
+    <Build Include="Tables\SendGridForEpiMailQueue.sql" />
+    <Build Include="Tables\SendGridForEpiMailQueueArchive.sql" />
   </ItemGroup>
 </Project>

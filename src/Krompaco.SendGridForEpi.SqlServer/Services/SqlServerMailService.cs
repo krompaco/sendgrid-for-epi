@@ -28,7 +28,7 @@
             int i = 1;
             var personalizations = item.Mail.Personalization.ToList();
 
-            const string InsertQuery = @"INSERT INTO [sendgridforepi_MailQueue] 
+            const string InsertQuery = @"INSERT INTO [SendGridForEpiMailQueue] 
                                             ([Date], [TemplateId], [MailJson], [Personalizations], [Batch], [LastAttempt], [Attempts])
                                             VALUES
                                             (@Date, @TemplateId, @MailJson, @Personalizations, @Batch, @LastAttempt, @Attempts)";
@@ -69,7 +69,7 @@
                                            ,[LastAttempt]
                                            ,[Attempts]
                                            ,[AttemptMessage]
-                                        FROM [sendgridforepi_MailQueue]
+                                        FROM [SendGridForEpiMailQueue]
                                         ORDER BY [Attempts]";
             var list = new List<MailQueueItem>();
 
@@ -123,11 +123,11 @@
             {
                 const string MoveQuery = @"BEGIN TRANSACTION [MoveTransaction]
 BEGIN TRY
-  INSERT INTO [sendgridforepi_MailQueueArchive]
+  INSERT INTO [SendGridForEpiMailQueueArchive]
       ([MailQueueId], [Date], [TemplateId], [MailJson], [Personalizations], [Batch], [LastAttempt], [Attempts], [AttemptMessage])
     SELECT [MailQueueId], [Date], [TemplateId], [MailJson], [Personalizations], [Batch], @LastAttempt AS LastAttempt, [Attempts] + 1 AS Attempts, [AttemptMessage]
-        FROM [sendgridforepi_MailQueue] WHERE [MailQueueId] = @MailQueueId
-  DELETE FROM [sendgridforepi_MailQueue] WHERE [MailQueueId] = @MailQueueId
+        FROM [SendGridForEpiMailQueue] WHERE [MailQueueId] = @MailQueueId
+  DELETE FROM [SendGridForEpiMailQueue] WHERE [MailQueueId] = @MailQueueId
   COMMIT TRANSACTION [MoveTransaction]
 END TRY
 BEGIN CATCH
@@ -174,7 +174,7 @@ END CATCH";
 
         private static void SetError(long mailQueueItemId, string message, SqlConnection openConnection)
         {
-            const string UpdateQuery = "UPDATE [sendgridforepi_MailQueue] SET [LastAttempt] = @LastAttempt, [Attempts] = [Attempts] + 1, [AttemptMessage] = @AttemptMessage WHERE [MailQueueId] = @MailQueueId";
+            const string UpdateQuery = "UPDATE [SendGridForEpiMailQueue] SET [LastAttempt] = @LastAttempt, [Attempts] = [Attempts] + 1, [AttemptMessage] = @AttemptMessage WHERE [MailQueueId] = @MailQueueId";
 
             var cmd = new SqlCommand(UpdateQuery, openConnection);
 
