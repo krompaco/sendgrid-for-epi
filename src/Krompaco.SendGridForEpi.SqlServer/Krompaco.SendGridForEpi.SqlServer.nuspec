@@ -15,7 +15,7 @@
 		<copyright>Copyright 2017</copyright>
 		<tags>SendGrid Mail E-mail</tags>
 		<dependencies>
-			<dependency id="Krompaco.SendGridForEpi" version="[0.1.5, 1.0.0)" />
+			<dependency id="Krompaco.SendGridForEpi" version="[0.1.7, 1.0.0)" />
 		</dependencies>
 	</metadata>
 </package>

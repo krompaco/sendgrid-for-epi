@@ -2,14 +2,15 @@
 {
     using System;
     using System.Net;
+    using System.Runtime.CompilerServices;
     using System.Text;
 
     using EPiServer.PlugIn;
     using EPiServer.Scheduler;
-
+    using SendGrid.CSharp.HTTP.Client;
     using Services;
 
-    [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", DefaultEnabled = false, GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
+    [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
     public class MailServiceQueueJob : ScheduledJobBase
     {
         private readonly IMailService mailService;
@@ -34,7 +35,8 @@
             {
                 try
                 {
-                    dynamic response = sg.client.mail.send.post(requestBody: mail.Mail.Get());
+                    ConfiguredTaskAwaitable<Response> task = sg.client.mail.send.post(requestBody: mail.Mail.Get());
+                    dynamic response = task.GetAwaiter().GetResult();
 
                     var sb = new StringBuilder();
                     sb.AppendLine(response.StatusCode.ToString());
