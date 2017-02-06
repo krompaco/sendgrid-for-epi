@@ -1,5 +1,4 @@
-﻿-- [MailQueueId], [Date], [TemplateId], [MailJson], [Personalizations], [Batch], [LastAttempt], [Attempts]
-CREATE TABLE [dbo].[SendGridForEpiMailQueueArchive]
+﻿CREATE TABLE [dbo].[SendGridForEpiMailQueueArchive]
 (
 	[MailQueueId] [bigint] NOT NULL,
 	[Date] [datetime] NOT NULL,
