@@ -13,11 +13,9 @@
 		<description>Service implementation for SQL Server. Queued SendGrid API POSTs for Episerver.</description>
 		<releaseNotes>First release.</releaseNotes>
 		<copyright>Copyright 2017</copyright>
-		<tags>EPiServer SendGrid</tags>
+		<tags>SendGrid Mail E-mail</tags>
 		<dependencies>
 			<dependency id="Krompaco.SendGridForEpi" version="[0.1.5, 1.0.0)" />
-			<dependency id="EPiServer.Framework" version="[10.3.2, 11.0.0)" />
-			<dependency id="structuremap-signed" version="[3.1.9.463, 4.0.0)" />
 		</dependencies>
 	</metadata>
 </package>

@@ -24,11 +24,11 @@
             {
                 var itemToSave = new MailQueueItem();
 
-                itemToSave.Date = DateTime.Now;
+                itemToSave.Date = DateTime.UtcNow;
                 itemToSave.Mail = JsonConvert.DeserializeObject<Mail>(item.Mail.Get());
                 itemToSave.Mail.Personalization = batch.ToList();
                 itemToSave.MailQueueItemId = Queue.Any() ? Queue.Max(x => x.Value.MailQueueItemId) + 1 : 1;
-                itemToSave.LastAttempt = DateTime.Now;
+                itemToSave.LastAttempt = DateTime.UtcNow;
                 itemToSave.Attempts++;
 
                 Queue.TryAdd(itemToSave.MailQueueItemId, itemToSave);
@@ -54,7 +54,7 @@
             var item = Queue[mailQueueItemId];
             item.Attempts++;
             item.AttemptMessage = message;
-            item.LastAttempt = DateTime.Now;
+            item.LastAttempt = DateTime.UtcNow;
         }
     }
 }

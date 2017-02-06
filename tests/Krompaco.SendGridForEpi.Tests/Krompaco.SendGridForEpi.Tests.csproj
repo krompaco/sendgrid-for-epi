@@ -28,7 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>Krompaco.SendGridForEpi.Tests.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\Krompaco.SendGridForEpi.Tests.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Krompaco.SendGridForEpi.Tests.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -40,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>Krompaco.SendGridForEpi.Tests.ruleset</CodeAnalysisRuleSet>
     <NoWarn>1591</NoWarn>
+    <DocumentationFile>bin\Release\Krompaco.SendGridForEpi.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

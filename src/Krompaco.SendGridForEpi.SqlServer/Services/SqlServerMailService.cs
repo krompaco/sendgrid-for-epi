@@ -13,9 +13,7 @@
     using SendGrid.Helpers.Mail;
     using SendGridForEpi.Services;
 
-    /// <summary>
-    /// Want to keep dependencies to a minimum so welcome to 2001 and System.Data!
-    /// </summary>
+    // Want to keep dependencies to a minimum so using System.Data like it was 2001
     [ServiceConfiguration(
         ServiceType = typeof(IMailService),
         Lifecycle = ServiceInstanceScope.Singleton)]

@@ -27,8 +27,7 @@
             var item = new MailQueueItem
             {
                 Mail = GetNewMailObject(),
-                Date = DateTime.Now,
-                Attempts = 0
+                Date = DateTime.UtcNow
             };
 
             service.AddToQueue(item);
@@ -42,8 +41,7 @@
             var item2 = new MailQueueItem
             {
                 Mail = GetNewMailObject(),
-                Date = DateTime.Now,
-                Attempts = 0
+                Date = DateTime.UtcNow
             };
 
             service.AddToQueue(item2);
@@ -64,8 +62,7 @@
             var item3 = new MailQueueItem
             {
                 Mail = GetNewMailObject(),
-                Date = DateTime.Now,
-                Attempts = 0
+                Date = DateTime.UtcNow
             };
 
             for (int i = 0; i < 1099; i++)
