@@ -120,7 +120,7 @@
                 Date = DateTime.UtcNow
             };
 
-            for (int i = 0; i < 1099; i++)
+            for (int i = 2; i < 1101; i++)
             {
                 item3.Mail.AddPersonalization(
                         new Personalization()
@@ -137,6 +137,10 @@
             Assert.AreEqual(3, list.Count);
             Assert.AreEqual(1000, list.Max(x => x.Mail.Personalization.Count));
             Assert.AreEqual(1, list.Count(x => x.Mail.Personalization.Count == 100));
+
+            Assert.AreEqual("somedude1000@krompaco.nu", list.Single(x => x.Mail.Personalization.Count == 1000).Mail.Personalization.Last().Tos.First().Address);
+
+            Assert.AreEqual("somedude1001@krompaco.nu", list.Single(x => x.Mail.Personalization.Count == 100).Mail.Personalization.First().Tos.First().Address);
         }
 
         private static Mail GetNewMailObject()
