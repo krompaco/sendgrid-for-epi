@@ -9,7 +9,7 @@ The main package requires you to add an app setting for the API Key. The key nee
 
     <add key="sendgridforepi:ApiKey" value="Usually.SG.followed.by.quite.a.long.string" />
    
-When using the Krompaco.SendGridForEpi.SqlServer package you have the option to use another connection string name than EPiServerDB. If not present or empty "EPiServerDB" will be used and two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created on startup if not already present.
+When using the Krompaco.SendGridForEpi.SqlServer package you have the option to use another connection string name than EPiServerDB. If not present or empty "EPiServerDB" will be used. Two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created on startup if not already present in the configured database.
 
     <add key="sendgridforepi:SqlServerConnectionStringName" value="MyOwnDB" />
 
