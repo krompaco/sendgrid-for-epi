@@ -7,7 +7,7 @@ Packages should be up on Episerver's NuGet feed shortly. The package Krompaco.Se
 ## Configuration
 The main package requires you to add an app setting for the API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
 
-   <add key="sendgridforepi:ApiKey" value="SG.and.quite.a.long.string..." />
+    <add key="sendgridforepi:ApiKey" value="Usually.SG.followed.by.quite.a.long.string" />
    
 When using the Krompaco.SendGridForEpi.SqlServer package you have the option to use another connection string name than EPiServerDB. If not present or empty "EPiServerDB" will be used and two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created on startup if not already present.
 
