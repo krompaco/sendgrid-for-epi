@@ -17,7 +17,7 @@
 		<dependencies>
 			<dependency id="EPiServer.CMS.UI.Core" version="[10.3.2, 11.0.0)" />
 			<dependency id="Sendgrid" version="[8.0.5, 9.0.0)" />
-			<!--<dependency id="structuremap-signed" version="3.1.9.463" />-->
+			<dependency id="structuremap-signed" version="3.1.9.463" />
 		</dependencies>
 	</metadata>
 </package>
