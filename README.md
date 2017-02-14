@@ -2,7 +2,11 @@
 NuGet distributed packages for Episerver that handles async API-posting by a "local" queue storage and a Scheduled Job securing successful posts.
 
 ## Installation
-Packages should be up on Episerver's NuGet feed shortly. The package Krompaco.SendGridForEpi.SqlServer will install both packages needed. Minimum Episerver version is 10.3.2 and SendGrid package is 8.0.5.
+Packages are in Episerver's NuGet feed. If not set up go to Visual Studio => NuGet Package Manager => Package Sources => Add http://nuget.episerver.com/feed/packages.svc/
+
+    Install-Package Krompaco.SendGridForEpi.SqlServer
+
+This package will install both packages needed. Minimum Episerver version is 10.3.2 and SendGrid package is 8.0.5.
 
 ## Configuration
 The main package requires you to add an app setting for the API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
