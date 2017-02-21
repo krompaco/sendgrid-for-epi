@@ -22,7 +22,7 @@ You add SendGrid.Helpers.Mail.Mail (from the offical package) objects to a queue
 
 The implementation handles batching of more than 1000 personalizations internally so you don't need to think about that limit.
 
-My recommended approach is to hold mail templates and as much content as possible in SendGrid and work with Replacements. Posting through the API with SendGrid edited templates will automatically use template images to track mails opened and also rewrite links in your content so that clicks are tracked.
+My recommended approach is to hold mail templates and as much content as possible in SendGrid and work with Substitutions. Posting through the API with SendGrid edited templates will automatically use template images to track mails opened and also rewrite links in your content so that clicks are tracked.
 
 In the following example I have put the Subject line and the Body in SendGrid's template editor and added a couple of replacement keys in the form of {whoIs} and {commentText}. SendGrid allows you have any syntax style but recommends staying away from whitespace within a key name.
 
