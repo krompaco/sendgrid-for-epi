@@ -2,12 +2,12 @@
 {
     using System;
     using System.Net;
-    using System.Runtime.CompilerServices;
     using System.Text;
 
     using EPiServer.PlugIn;
     using EPiServer.Scheduler;
-    using SendGrid.CSharp.HTTP.Client;
+    using Krompaco.SendGridForEpi.Helpers;
+    using SendGrid;
     using Services;
 
     [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
@@ -24,7 +24,7 @@
         {
             var config = new SendGridForEpi.Configuration();
 
-            dynamic sg = new SendGrid.SendGridAPIClient(config.ApiKey);
+            var client = new SendGridClient(config.ApiKey);
 
             var queue = this.mailService.GetQueue();
             int retrieved = queue.Count;
@@ -35,12 +35,18 @@
             {
                 try
                 {
-                    ConfiguredTaskAwaitable<Response> task = sg.client.mail.send.post(requestBody: mail.Mail.Get());
-                    dynamic response = task.GetAwaiter().GetResult();
+                    string json = mail.Mail.Serialize();
+
+                    var response = AsyncHelper.RunSync(() => client.RequestAsync(
+                                                                SendGridClient.Method.POST,
+                                                                json,
+                                                                urlPath: "mail/send"));
+
+                    var body = AsyncHelper.RunSync(() => response.Body.ReadAsStringAsync());
 
                     var sb = new StringBuilder();
                     sb.AppendLine(response.StatusCode.ToString());
-                    sb.AppendLine(response.Body.ReadAsStringAsync().Result);
+                    sb.AppendLine(body);
                     sb.AppendLine(response.Headers.ToString());
 
                     if (response.StatusCode == HttpStatusCode.Accepted)

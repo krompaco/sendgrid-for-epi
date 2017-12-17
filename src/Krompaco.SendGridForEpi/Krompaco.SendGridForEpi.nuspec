@@ -11,13 +11,13 @@
 		<iconUrl>http://krompaco.nu/globalassets/nuget/logo.png</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Service and a Epi scheduled job that handles queued SendGrid API POSTs.</description>
-		<releaseNotes>First release.</releaseNotes>
+		<releaseNotes>Support for EPiServer.CMS.UI.Core 11.1.1 and newer.</releaseNotes>
 		<copyright>Copyright 2017</copyright>
 		<tags>SendGrid Mail E-mail</tags>
 		<dependencies>
-			<dependency id="EPiServer.CMS.UI.Core" version="[10.3.2, 11.0.0)" />
-			<dependency id="Sendgrid" version="[8.0.5, 9.0.0)" />
-			<dependency id="structuremap-signed" version="3.1.9.463" />
+			<dependency id="EPiServer.CMS.UI.Core" version="[11.1.1, 12.0.0)" />
+			<dependency id="EPiServer.ServiceLocation.StructureMap" version="[2.0.0, 99.0.0)" />
+			<dependency id="Sendgrid" version="[9.9.0, 10.0.0)" />
 		</dependencies>
 	</metadata>
 </package>

@@ -24,7 +24,7 @@
         public void AddToQueue(MailQueueItem item)
         {
             int i = 1;
-            var personalizations = item.Mail.Personalization.ToList();
+            var personalizations = item.Mail.Personalizations.ToList();
 
             const string InsertQuery = @"INSERT INTO [SendGridForEpiMailQueue] 
                                             ([Date], [TemplateId], [MailJson], [Personalizations], [Batch], [LastAttempt], [Attempts])
@@ -39,14 +39,14 @@
                 // so we make copies with batched Personalizations here if needed
                 foreach (var batch in personalizations.SplitToBatches(1000))
                 {
-                    item.Mail.Personalization = batch.ToList();
+                    item.Mail.Personalizations = batch.ToList();
 
                     var cmd = new SqlCommand(InsertQuery, connection);
 
                     cmd.Parameters.AddWithValue("@Date", item.Date);
                     cmd.Parameters.AddWithValue("@TemplateId", item.Mail.TemplateId);
-                    cmd.Parameters.AddWithValue("@MailJson", item.Mail.Get());
-                    cmd.Parameters.AddWithValue("@Personalizations", item.Mail.Personalization.Count);
+                    cmd.Parameters.AddWithValue("@MailJson", item.Mail.Serialize());
+                    cmd.Parameters.AddWithValue("@Personalizations", item.Mail.Personalizations.Count);
                     cmd.Parameters.AddWithValue("@Batch", i);
                     cmd.Parameters.AddWithValue("@LastAttempt", DateTime.UtcNow);
                     cmd.Parameters.AddWithValue("@Attempts", 0);
@@ -99,7 +99,7 @@
                                         Attempts = reader.GetInt32(attemptsOrdinal),
                                         Date = reader.GetDateTime(dateOrdinal),
                                         LastAttempt = reader.GetDateTime(lastAttemptOrdinal),
-                                        Mail = JsonConvert.DeserializeObject<Mail>(reader.GetString(mailJsonOrdinal)),
+                                        Mail = JsonConvert.DeserializeObject<SendGridMessage>(reader.GetString(mailJsonOrdinal)),
                                     });
                                 }
                                 catch (Exception ex)

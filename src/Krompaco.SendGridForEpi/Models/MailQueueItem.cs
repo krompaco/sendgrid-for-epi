@@ -20,7 +20,7 @@
         /// <summary>
         /// Gets or sets the SendGrid Mail object. Typically you would set From, TemplateId and use AddPersonalization().
         /// </summary>
-        public SendGrid.Helpers.Mail.Mail Mail { get; set; }
+        public SendGrid.Helpers.Mail.SendGridMessage Mail { get; set; }
 
         /// <summary>
         /// Gets or sets the LastAttempt property. Will always be overwritten to DateTime.UtcNow in AddToQueue() method.

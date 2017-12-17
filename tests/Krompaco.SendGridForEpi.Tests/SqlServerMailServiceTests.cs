@@ -67,10 +67,10 @@
 
             for (int i = 2; i < 1101; i++)
             {
-                item3.Mail.AddPersonalization(
+                item3.Mail.Personalizations.Add(
                         new Personalization()
                         {
-                            Tos = new List<Email> { new SendGrid.Helpers.Mail.Email($"somedude{i}@krompaco.nu") },
+                            Tos = new List<EmailAddress> { new EmailAddress($"somedude{i}@krompaco.nu") },
                             Substitutions = new Dictionary<string, string> { { "{name}", $"Some Dude {i}" } }
                         });
             }
@@ -80,12 +80,12 @@
             list = service.GetQueue();
 
             Assert.AreEqual(previousCount + 2, list.Count);
-            Assert.AreEqual(1000, list.Max(x => x.Mail.Personalization.Count));
-            Assert.AreEqual(1, list.Count(x => x.Mail.Personalization.Count == 100));
+            Assert.AreEqual(1000, list.Max(x => x.Mail.Personalizations.Count));
+            Assert.AreEqual(1, list.Count(x => x.Mail.Personalizations.Count == 100));
 
-            Assert.AreEqual("somedude1000@krompaco.nu", list.Single(x => x.Mail.Personalization.Count == 1000).Mail.Personalization.Last().Tos.First().Address);
+            Assert.AreEqual("somedude1000@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 1000).Mail.Personalizations.Last().Tos.First().Email);
 
-            Assert.AreEqual("somedude1001@krompaco.nu", list.Single(x => x.Mail.Personalization.Count == 100).Mail.Personalization.First().Tos.First().Address);
+            Assert.AreEqual("somedude1001@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 100).Mail.Personalizations.First().Tos.First().Email);
 
             foreach (var m in list)
             {
@@ -97,23 +97,24 @@
             Assert.AreEqual(0, list.Count);
         }
 
-        private static Mail GetNewMailObject()
+        private static SendGridMessage GetNewMailObject()
         {
-            var mail = new Mail
+            var mail = new SendGridMessage
             {
-                From = new Email("test@krompaco.nu", "Krompaco Test"),
+                From = new EmailAddress("test@krompaco.nu", "Krompaco Test"),
                 TemplateId = "6069c78d-c65b-4701-867f-16cf95ad5138",
-                Subject = "Testing Krompaco åäö"
+                Subject = "Testing Krompaco åäö",
+                Personalizations = new List<Personalization>()
             };
 
             var emails = new List<string> { "some.dude@krompaco.nu" };
 
             foreach (var email in emails)
             {
-                mail.AddPersonalization(
+                mail.Personalizations.Add(
                     new Personalization()
                     {
-                        Tos = new List<Email> { new SendGrid.Helpers.Mail.Email(email) },
+                        Tos = new List<EmailAddress> { new EmailAddress(email) },
                         Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } }
                     });
             }

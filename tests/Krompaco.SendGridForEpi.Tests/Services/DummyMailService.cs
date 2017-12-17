@@ -18,15 +18,15 @@
 
         public void AddToQueue(MailQueueItem item)
         {
-            var personalizations = item.Mail.Personalization.ToList();
+            var personalizations = item.Mail.Personalizations.ToList();
 
             foreach (var batch in personalizations.SplitToBatches(1000))
             {
                 var itemToSave = new MailQueueItem();
 
                 itemToSave.Date = DateTime.UtcNow;
-                itemToSave.Mail = JsonConvert.DeserializeObject<Mail>(item.Mail.Get());
-                itemToSave.Mail.Personalization = batch.ToList();
+                itemToSave.Mail = JsonConvert.DeserializeObject<SendGridMessage>(item.Mail.Serialize());
+                itemToSave.Mail.Personalizations = batch.ToList();
                 itemToSave.MailQueueItemId = Queue.Any() ? Queue.Max(x => x.Value.MailQueueItemId) + 1 : 1;
                 itemToSave.LastAttempt = DateTime.UtcNow;
                 itemToSave.Attempts++;

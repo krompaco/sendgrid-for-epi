@@ -11,11 +11,11 @@
 		<iconUrl>http://krompaco.nu/globalassets/nuget/logo.png</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Service implementation for SQL Server. Queued SendGrid API POSTs for Episerver.</description>
-		<releaseNotes>First release.</releaseNotes>
+		<releaseNotes>Support for EPiServer.CMS.UI.Core 11.1.1 and newer.</releaseNotes>
 		<copyright>Copyright 2017</copyright>
 		<tags>SendGrid Mail E-mail</tags>
 		<dependencies>
-			<dependency id="Krompaco.SendGridForEpi" version="[0.1.7, 1.0.0)" />
+			<dependency id="Krompaco.SendGridForEpi" version="[0.2.0, 1.0.0)" />
 		</dependencies>
 	</metadata>
 </package>
