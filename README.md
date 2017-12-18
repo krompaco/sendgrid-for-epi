@@ -6,7 +6,8 @@ Packages are in Episerver's NuGet feed. If not set up go to Visual Studio => NuG
 
     Install-Package Krompaco.SendGridForEpi.SqlServer
 
-This package will install both packages needed. Minimum Episerver version is 10.3.2 and SendGrid package is 8.0.5.
+This package will install both packages needed. Minimum Episerver version is 11.2.1 and SendGrid package is 9.9.0 (you can find an older package that supports 10.3.2 with SendGrid package 8.0.5).
+
 
 ## Configuration
 The main package requires you to add an app setting for the API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
@@ -26,18 +27,19 @@ My recommended approach is to hold mail templates and as much content as possibl
 
 In the following example I have put the Subject line and the Body in SendGrid's template editor and added a couple of replacement keys in the form of {whoIs} and {commentText}. SendGrid allows you have any syntax style but recommends staying away from whitespace within a key name.
 
-    var mail = new Mail
+    var mail = new SendGridMessage
     {
-        From = new Email("noreply@krompaco.nu"),
-        TemplateId = "cf6d9ac4-****-480b-a95a-77921d060261"
+        From = new EmailAddress("noreply@krompaco.nu"),
+        TemplateId = "cf6d9ac4-****-480b-a95a-77921d060261",
+        Personalizations = new List<Personalization>()
     };
 
-    mail.AddPersonalization(
+    mail.Personalizations.Add(
         new Personalization()
         {
-            Tos = new List<Email>
+            Tos = new List<EmailAddress>
                     {
-                        new Email("somedude@krompaco.nu")
+                        new EmailAddress("somedude@krompaco.nu")
                     },
             Substitutions = new Dictionary<string, string>
                     {

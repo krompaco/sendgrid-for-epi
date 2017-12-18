@@ -35,12 +35,7 @@
             {
                 try
                 {
-                    string json = mail.Mail.Serialize();
-
-                    var response = AsyncHelper.RunSync(() => client.RequestAsync(
-                                                                SendGridClient.Method.POST,
-                                                                json,
-                                                                urlPath: "mail/send"));
+                    var response = AsyncHelper.RunSync(() => client.SendEmailAsync(mail.Mail));
 
                     var body = AsyncHelper.RunSync(() => response.Body.ReadAsStringAsync());
 
