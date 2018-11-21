@@ -6,7 +6,7 @@ Packages are in Episerver's NuGet feed. If not set up go to Visual Studio => NuG
 
     Install-Package Krompaco.SendGridForEpi.SqlServer
 
-This package will install both packages needed. Minimum Episerver version is 11.2.1 and SendGrid package is 9.9.0 (you can find an older package that supports 10.3.2 with SendGrid package 8.0.5).
+This package will install both packages needed. Minimum Episerver version is 11.10.6 and SendGrid package is 9.10.0.
 
 
 ## Configuration
@@ -19,7 +19,7 @@ When using the Krompaco.SendGridForEpi.SqlServer package you have the option to 
     <add key="sendgridforepi:SqlServerConnectionStringName" value="MyOwnDB" />
 
 ## How it works
-You add SendGrid.Helpers.Mail.Mail (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
+You add SendGridMessage (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
 
 The implementation handles batching of more than 1000 personalizations internally so you don't need to think about that limit.
 
@@ -49,14 +49,14 @@ In the SendGrid template I will use Handlebars to output the data above using {{
         new Personalization()
         {
             Tos = new List<EmailAddress>
-                {
-                  new EmailAddress("notifications@krompaco.nu")
-                },
-                TemplateData = new CommentTemplateData
-                {
-                    WhoIs = "Some Name",
-                    CommentText = "<p>First line of comment.</p><p>Second line of comment.</p>",
-                }
+                    {
+                        new EmailAddress("notifications@krompaco.nu")
+                    },
+                    TemplateData = new CommentTemplateData
+                    {
+                        WhoIs = "Some Name",
+                        CommentText = "<p>First line of comment.</p><p>Second line of comment.</p>",
+                    }
     });
     
     this.mailService.AddToQueue(new MailQueueItem
