@@ -23,31 +23,42 @@ You add SendGrid.Helpers.Mail.Mail (from the offical package) objects to a queue
 
 The implementation handles batching of more than 1000 personalizations internally so you don't need to think about that limit.
 
-My recommended approach is to hold mail templates and as much content as possible in SendGrid and work with Substitutions. Posting through the API with SendGrid edited templates will automatically use template images to track mails opened and also rewrite links in your content so that clicks are tracked.
+My recommended approach is to hold mail templates and as much content as possible in SendGrid and work with Handlebars syntax. Posting through the API with SendGrid edited templates will automatically use template images to track mails opened and also rewrite links in your content so that clicks are tracked.
 
-In the following example I have put the Subject line and the Body in SendGrid's template editor and added a couple of replacement keys in the form of {whoIs} and {commentText}. SendGrid allows you have any syntax style but recommends staying away from whitespace within a key name.
+In the following example I have put the Subject line and the Body in SendGrid's template editor and use this model for the dynamic data.
+
+    private class CommentTemplateData
+    {
+        [JsonProperty("whoIs")]
+        public string WhoIs { get; set; }
+
+        [JsonProperty("commentText")]
+        public string CommentText { get; set; }
+    }
+
+In the SendGrid template I will use Handlebars to output the data above using {{whoIs}} and triple-stash for the HTML property {{{commentText}}}.
 
     var mail = new SendGridMessage
     {
         From = new EmailAddress("noreply@krompaco.nu"),
-        TemplateId = "cf6d9ac4-****-480b-a95a-77921d060261",
+        TemplateId = "the-id-found-in-the-sendgrid-template-editor",
         Personalizations = new List<Personalization>()
     };
-
+    
     mail.Personalizations.Add(
         new Personalization()
         {
             Tos = new List<EmailAddress>
-                    {
-                        new EmailAddress("somedude@krompaco.nu")
-                    },
-            Substitutions = new Dictionary<string, string>
-                    {
-                        { "{whoIs}", "Some Dude" },
-                        { "{commentText}", "A <b>bold</b> comment" }
-                    }
-        });
-
+                {
+                  new EmailAddress("notifications@krompaco.nu")
+                },
+                TemplateData = new CommentTemplateData
+                {
+                    WhoIs = "Some Name",
+                    CommentText = "<p>First line of comment.</p><p>Second line of comment.</p>",
+                }
+    });
+    
     this.mailService.AddToQueue(new MailQueueItem
     {
         Date = DateTime.UtcNow,
