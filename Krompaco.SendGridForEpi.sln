@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Krompaco.SendGridForEpi", "src\Krompaco.SendGridForEpi\Krompaco.SendGridForEpi.csproj", "{A95CF1D5-797C-4A0E-BDD9-EA0065C5F5EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krompaco.SendGridForEpi.SqlServer", "src\Krompaco.SendGridForEpi.SqlServer\Krompaco.SendGridForEpi.SqlServer.csproj", "{4FB74151-6BE6-4464-AEEE-D2CC68F73349}"
+EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Krompaco.SendGridForEpi.SqlServer.Database", "src\Krompaco.SendGridForEpi.SqlServer.Database\Krompaco.SendGridForEpi.SqlServer.Database.sqlproj", "{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krompaco.SendGridForEpi.SqlServer", "src\Krompaco.SendGridForEpi.SqlServer\Krompaco.SendGridForEpi.SqlServer.csproj", "{929F50FD-8294-4E6E-B6CE-FBAD2686CFEE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krompaco.SendGridForEpi", "src\Krompaco.SendGridForEpi\Krompaco.SendGridForEpi.csproj", "{C86FCDC7-9380-44FC-89CF-A1118C8525D6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krompaco.SendGridForEpi.Tests", "tests\Krompaco.SendGridForEpi.Tests\Krompaco.SendGridForEpi.Tests.csproj", "{2EBD2019-8498-4BAD-8D73-5E551388C707}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krompaco.SendGridForEpi.Tests", "tests\Krompaco.SendGridForEpi.Tests\Krompaco.SendGridForEpi.Tests.csproj", "{60C55BB3-3FF5-4346-8E2B-70ED482174BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,24 +17,29 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A95CF1D5-797C-4A0E-BDD9-EA0065C5F5EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A95CF1D5-797C-4A0E-BDD9-EA0065C5F5EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A95CF1D5-797C-4A0E-BDD9-EA0065C5F5EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A95CF1D5-797C-4A0E-BDD9-EA0065C5F5EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FB74151-6BE6-4464-AEEE-D2CC68F73349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FB74151-6BE6-4464-AEEE-D2CC68F73349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FB74151-6BE6-4464-AEEE-D2CC68F73349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FB74151-6BE6-4464-AEEE-D2CC68F73349}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5F254EB-81E7-4BAE-A617-CCBBDBA3E103}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{929F50FD-8294-4E6E-B6CE-FBAD2686CFEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{929F50FD-8294-4E6E-B6CE-FBAD2686CFEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{929F50FD-8294-4E6E-B6CE-FBAD2686CFEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{929F50FD-8294-4E6E-B6CE-FBAD2686CFEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C86FCDC7-9380-44FC-89CF-A1118C8525D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C86FCDC7-9380-44FC-89CF-A1118C8525D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C86FCDC7-9380-44FC-89CF-A1118C8525D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C86FCDC7-9380-44FC-89CF-A1118C8525D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2EBD2019-8498-4BAD-8D73-5E551388C707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EBD2019-8498-4BAD-8D73-5E551388C707}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EBD2019-8498-4BAD-8D73-5E551388C707}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EBD2019-8498-4BAD-8D73-5E551388C707}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C55BB3-3FF5-4346-8E2B-70ED482174BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C55BB3-3FF5-4346-8E2B-70ED482174BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C55BB3-3FF5-4346-8E2B-70ED482174BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C55BB3-3FF5-4346-8E2B-70ED482174BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {51E19699-BE66-4461-920A-0C16F4D42403}
 	EndGlobalSection
 EndGlobal
