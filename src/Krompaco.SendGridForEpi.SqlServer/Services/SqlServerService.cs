@@ -1,19 +1,18 @@
-﻿namespace Krompaco.SendGridForEpi.SqlServer.Services
+﻿using Microsoft.Data.SqlClient;
+
+namespace Krompaco.SendGridForEpi.SqlServer.Services;
+
+public class SqlServerService
 {
-    using System.Configuration;
-    using System.Data.SqlClient;
-
-    public class SqlServerService
+    public SqlConnection GetNewConnection()
     {
-        public SqlConnection GetNewConnection()
-        {
-            var config = new SendGridForEpi.SqlServer.Configuration();
-            return new SqlConnection(ConfigurationManager.ConnectionStrings[config.SqlServerConnectionStringName].ConnectionString);
-        }
+        var config = new SendGridForEpi.SqlServer.Configuration(string.Empty);
+        return new SqlConnection(config.SqlServerConnectionString);
+    }
 
-        public void CreateTablesIfNeeded()
-        {
-            const string Script = @"IF NOT EXISTS(SELECT * FROM sys.objects
+    public void CreateTablesIfNeeded()
+    {
+        const string Script = @"IF NOT EXISTS(SELECT * FROM sys.objects
 WHERE object_id = OBJECT_ID(N'[dbo].[SendGridForEpiMailQueue]') AND type in (N'U'))
 BEGIN
 
@@ -59,14 +58,9 @@ CREATE TABLE [dbo].[SendGridForEpiMailQueueArchive]
 
 END";
 
-            using (SqlConnection connection = this.GetNewConnection())
-            {
-                connection.Open();
-
-                var cmd = new SqlCommand(Script, connection);
-
-                cmd.ExecuteNonQuery();
-            }
-        }
+        using var connection = this.GetNewConnection();
+        connection.Open();
+        var cmd = new SqlCommand(Script, connection);
+        cmd.ExecuteNonQuery();
     }
 }

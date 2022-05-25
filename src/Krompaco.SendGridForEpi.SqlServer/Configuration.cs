@@ -1,19 +1,11 @@
-﻿namespace Krompaco.SendGridForEpi.SqlServer
+﻿namespace Krompaco.SendGridForEpi.SqlServer;
+
+public class Configuration
 {
-    using System.Configuration;
-
-    public class Configuration
+    public Configuration(string sqlServerConnectionString)
     {
-        public Configuration()
-        {
-            this.SqlServerConnectionStringName = ConfigurationManager.AppSettings["sendgridforepi:SqlServerConnectionStringName"];
-
-            if (string.IsNullOrWhiteSpace(this.SqlServerConnectionStringName))
-            {
-                this.SqlServerConnectionStringName = "EPiServerDB";
-            }
-        }
-
-        public string SqlServerConnectionStringName { get; set; }
+        this.SqlServerConnectionString = sqlServerConnectionString;
     }
+
+    public string SqlServerConnectionString { get; set; }
 }
