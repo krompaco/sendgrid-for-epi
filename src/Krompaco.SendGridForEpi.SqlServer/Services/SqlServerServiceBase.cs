@@ -2,12 +2,18 @@
 
 namespace Krompaco.SendGridForEpi.SqlServer.Services;
 
-public class SqlServerService
+public abstract class SqlServerServiceBase
 {
+    protected SqlServerServiceBase(string sqlServerConnectionString)
+    {
+        this.SqlServerConnectionString = sqlServerConnectionString;
+    }
+
+    protected string SqlServerConnectionString { get; set; }
+
     public SqlConnection GetNewConnection()
     {
-        var config = new SendGridForEpi.SqlServer.Configuration(string.Empty);
-        return new SqlConnection(config.SqlServerConnectionString);
+        return new SqlConnection(this.SqlServerConnectionString);
     }
 
     public void CreateTablesIfNeeded()

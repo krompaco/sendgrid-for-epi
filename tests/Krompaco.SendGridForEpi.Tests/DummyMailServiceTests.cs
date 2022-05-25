@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Models;
+﻿using Krompaco.SendGridForEpi.Models;
+using Krompaco.SendGridForEpi.Services;
+using Krompaco.SendGridForEpi.Tests.Services;
 using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
-using SendGridForEpi.Services;
-using Services;
+using Xunit.Abstractions;
 
 namespace Krompaco.SendGridForEpi.Tests;
 
@@ -34,39 +32,46 @@ public class DummyMailServiceTests
 }
 ";
 
+    private readonly ITestOutputHelper testOutputHelper;
+
+    public DummyMailServiceTests(ITestOutputHelper testOutputHelper)
+    {
+        this.testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void SerializesAsExpected()
     {
         var mail = GetNewMailObject();
 
-        string body = mail.Serialize();
+        var body = mail.Serialize();
 
-        Console.WriteLine(body);
+        this.testOutputHelper.WriteLine(body);
 
-        Assert.AreEqual(JsonString, body);
+        Assert.Equal(JsonString, body);
     }
 
     [Fact]
     public void DeserializesAsExpected()
     {
-        SendGridMessage mail = JsonConvert.DeserializeObject<SendGridMessage>(JsonString);
-        string deserializedAndBackUsingNormalWay = mail.Serialize();
+        var mail = JsonConvert.DeserializeObject<SendGridMessage>(JsonString) ?? new SendGridMessage();
+        var deserializedAndBackUsingNormalWay = mail.Serialize();
 
-        Console.WriteLine(deserializedAndBackUsingNormalWay);
+        this.testOutputHelper.WriteLine(deserializedAndBackUsingNormalWay);
 
-        Assert.AreEqual(GetNewMailObject().Serialize(), deserializedAndBackUsingNormalWay);
+        Assert.Equal(GetNewMailObject().Serialize(), deserializedAndBackUsingNormalWay);
     }
 
     [Fact]
     public void DeserializesAsExpectedWithFormattedString()
     {
         var original = GetNewMailObject();
-        SendGridMessage mail = JsonConvert.DeserializeObject<SendGridMessage>(FormattedJsonString);
-        string deserializedAndBackUsingNormalWay = mail.Serialize();
+        var mail = JsonConvert.DeserializeObject<SendGridMessage>(FormattedJsonString);
+        var deserializedAndBackUsingNormalWay = mail?.Serialize();
 
-        Console.WriteLine(deserializedAndBackUsingNormalWay);
+        this.testOutputHelper.WriteLine(deserializedAndBackUsingNormalWay);
 
-        Assert.AreEqual(original.Serialize(), deserializedAndBackUsingNormalWay);
+        Assert.Equal(original.Serialize(), deserializedAndBackUsingNormalWay);
     }
 
     [Fact]
@@ -77,29 +82,29 @@ public class DummyMailServiceTests
         var item = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
         service.AddToQueue(item);
 
         var list = service.GetQueue();
 
-        Assert.AreEqual(list.Count, 1);
+        Assert.Single(list);
 
-        Assert.AreEqual(item.Mail.TemplateId, list.First().Mail.TemplateId);
+        Assert.Equal(item.Mail.TemplateId, list.First().Mail?.TemplateId);
 
         var item2 = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
         service.AddToQueue(item2);
 
         list = service.GetQueue();
 
-        Assert.AreEqual(2, list.Count);
-        Assert.AreEqual(item2.Mail.TemplateId, list.Last().Mail.TemplateId);
+        Assert.Equal(2, list.Count);
+        Assert.Equal(item2.Mail.TemplateId, list.Last().Mail?.TemplateId);
 
         service.MarkComplete(list.First().MailQueueItemId);
 
@@ -107,24 +112,24 @@ public class DummyMailServiceTests
 
         list = service.GetQueue();
 
-        Assert.AreEqual(1, list.Count);
-        Assert.AreEqual(2, list.First().MailQueueItemId);
-        Assert.AreEqual("Some error message.", list.First().AttemptMessage);
+        Assert.Single(list);
+        Assert.Equal(2, list.First().MailQueueItemId);
+        Assert.Equal("Some error message.", list.First().AttemptMessage);
 
         // Check that batching is working
         var item3 = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
-        for (int i = 2; i < 1101; i++)
+        for (var i = 2; i < 1101; i++)
         {
             item3.Mail.Personalizations.Add(
                     new Personalization()
                     {
                         Tos = new List<EmailAddress> { new EmailAddress($"somedude{i}@krompaco.nu") },
-                        Substitutions = new Dictionary<string, string> { { "{name}", $"Some Dude {i}" } }
+                        Substitutions = new Dictionary<string, string> { { "{name}", $"Some Dude {i}" } },
                     });
         }
 
@@ -132,13 +137,13 @@ public class DummyMailServiceTests
 
         list = service.GetQueue();
 
-        Assert.AreEqual(3, list.Count);
-        Assert.AreEqual(1000, list.Max(x => x.Mail.Personalizations.Count));
-        Assert.AreEqual(1, list.Count(x => x.Mail.Personalizations.Count == 100));
+        Assert.Equal(3, list.Count);
+        Assert.Equal(1000, list.Max(x => x.Mail?.Personalizations.Count));
+        Assert.Equal(1, list.Count(x => x.Mail?.Personalizations.Count == 100));
 
-        Assert.AreEqual("somedude1000@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 1000).Mail.Personalizations.Last().Tos.First().Email);
+        Assert.Equal("somedude1000@krompaco.nu", list.Single(x => x.Mail?.Personalizations.Count == 1000).Mail?.Personalizations.Last().Tos.First().Email);
 
-        Assert.AreEqual("somedude1001@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 100).Mail.Personalizations.First().Tos.First().Email);
+        Assert.Equal("somedude1001@krompaco.nu", list.Single(x => x.Mail?.Personalizations.Count == 100).Mail?.Personalizations.First().Tos.First().Email);
     }
 
     private static SendGridMessage GetNewMailObject()
@@ -148,7 +153,7 @@ public class DummyMailServiceTests
             From = new EmailAddress("test@krompaco.nu", "Krompaco Test"),
             TemplateId = "6069c78d-c65b-4701-867f-16cf95ad5138",
             Subject = "Testing Krompaco åäö",
-            Personalizations = new List<Personalization>()
+            Personalizations = new List<Personalization>(),
         };
 
         var emails = new List<string> { "some.dude@krompaco.nu" };
@@ -159,7 +164,7 @@ public class DummyMailServiceTests
                 new Personalization()
                 {
                     Tos = new List<EmailAddress> { new EmailAddress(email) },
-                    Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } }
+                    Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } },
                 });
         }
 

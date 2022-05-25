@@ -7,14 +7,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;SA1200;SA1600;SA1633</NoWarn>
+    <NoWarn>1701;1702;SA0001;SA1011;SA1200;SA1600;SA1633</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;SA1200;SA1600;SA1633</NoWarn>
+    <NoWarn>1701;1702;SA0001;SA1011;SA1200;SA1600;SA1633</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPiServer.CMS.AspNetCore" Version="12.6.0" />
+    <PackageReference Include="EPiServer.Framework.AspNetCore" Version="12.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

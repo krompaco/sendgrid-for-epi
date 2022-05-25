@@ -1,40 +1,32 @@
-﻿namespace Krompaco.SendGridForEpi.Extensions
+﻿namespace Krompaco.SendGridForEpi.Extensions;
+
+public static class IEnumerableExtensions
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    // ReSharper disable once InconsistentNaming
-    public static class IEnumerableExtensions
+    public static IEnumerable<IEnumerable<T>> SplitToBatches<T>(this IEnumerable<T> enumerable, int size = 1000)
     {
-        public static IEnumerable<IEnumerable<T>> SplitToBatches<T>(this IEnumerable<T> enumerable, int size = 1000)
+        T[]? temp = null;
+        var i = 0;
+
+        foreach (var item in enumerable)
         {
-            T[] temp = null;
-            var i = 0;
+            temp ??= new T[size];
 
-            foreach (var item in enumerable)
+            temp[i++] = item;
+
+            if (i != size)
             {
-                if (temp == null)
-                {
-                    temp = new T[size];
-                }
-
-                temp[i++] = item;
-
-                if (i != size)
-                {
-                    continue;
-                }
-
-                yield return temp.Select(x => x);
-
-                temp = null;
-                i = 0;
+                continue;
             }
 
-            if (temp != null && i > 0)
-            {
-                yield return temp.Take(i);
-            }
+            yield return temp.Select(x => x);
+
+            temp = null;
+            i = 0;
+        }
+
+        if (temp != null && i > 0)
+        {
+            yield return temp.Take(i);
         }
     }
 }

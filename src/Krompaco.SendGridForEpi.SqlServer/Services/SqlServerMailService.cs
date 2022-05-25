@@ -7,43 +7,48 @@ using SendGrid.Helpers.Mail;
 
 namespace Krompaco.SendGridForEpi.SqlServer.Services;
 
-////[ServiceConfiguration(
-////    ServiceType = typeof(IMailService),
-////    Lifecycle = ServiceInstanceScope.Singleton)]
-public class SqlServerMailService : SqlServerService, IMailService
+public class SqlServerMailService : SqlServerServiceBase, IMailService
 {
-    private static readonly object ServiceLock = new object();
+    private static readonly object ServiceLock = new();
+
+    public SqlServerMailService(string sqlServerConnectionString)
+        : base(sqlServerConnectionString)
+    {
+    }
 
     public void AddToQueue(MailQueueItem item)
     {
-        int i = 1;
-        var personalizations = item.Mail.Personalizations.ToList();
+        var i = 1;
+        var personalizations = item.Mail?.Personalizations.ToList() ?? new List<Personalization>();
 
-        const string InsertQuery = @"INSERT INTO [SendGridForEpiMailQueue] 
+        const string InsertQuery = @"INSERT INTO [SendGridForEpiMailQueue]
                                             ([Date], [TemplateId], [MailJson], [Personalizations], [Batch], [LastAttempt], [Attempts])
                                             VALUES
                                             (@Date, @TemplateId, @MailJson, @Personalizations, @Batch, @LastAttempt, @Attempts)";
 
-        using SqlConnection connection = this.GetNewConnection();
+        using var connection = this.GetNewConnection();
         connection.Open();
 
         // SendGrid API accepts 1000 personalizations per send posting
         // so we make copies with batched Personalizations here if needed
         foreach (var batch in personalizations.SplitToBatches(1000))
         {
-            item.Mail.Personalizations = batch.ToList();
+            if (item.Mail != null)
+            {
+                item.Mail.Personalizations = batch.ToList();
 
-            var cmd = new SqlCommand(InsertQuery, connection);
+                var cmd = new SqlCommand(InsertQuery, connection);
 
-            cmd.Parameters.AddWithValue("@Date", item.Date);
-            cmd.Parameters.AddWithValue("@TemplateId", item.Mail.TemplateId);
-            cmd.Parameters.AddWithValue("@MailJson", item.Mail.Serialize());
-            cmd.Parameters.AddWithValue("@Personalizations", item.Mail.Personalizations.Count);
-            cmd.Parameters.AddWithValue("@Batch", i);
-            cmd.Parameters.AddWithValue("@LastAttempt", DateTime.UtcNow);
-            cmd.Parameters.AddWithValue("@Attempts", 0);
+                cmd.Parameters.AddWithValue("@Date", item.Date);
+                cmd.Parameters.AddWithValue("@TemplateId", item.Mail.TemplateId);
+                cmd.Parameters.AddWithValue("@MailJson", item.Mail.Serialize());
+                cmd.Parameters.AddWithValue("@Personalizations", item.Mail.Personalizations.Count);
+                cmd.Parameters.AddWithValue("@Batch", i);
+                cmd.Parameters.AddWithValue("@LastAttempt", DateTime.UtcNow);
+                cmd.Parameters.AddWithValue("@Attempts", 0);
 
-            cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
+            }
 
             i++;
         }
@@ -64,41 +69,35 @@ public class SqlServerMailService : SqlServerService, IMailService
 
         lock (ServiceLock)
         {
-            using (SqlConnection connection = this.GetNewConnection())
+            using var connection = this.GetNewConnection();
+            connection.Open();
+
+            using var command = new SqlCommand(SelectQuery, connection);
+            using var reader = command.ExecuteReader();
+            var mailQueueItemIdOrdinal = reader.GetOrdinal("MailQueueId");
+            var dateOrdinal = reader.GetOrdinal("Date");
+            var lastAttemptOrdinal = reader.GetOrdinal("LastAttempt");
+            var attemptsOrdinal = reader.GetOrdinal("Attempts");
+            var attemptMessageOrdinal = reader.GetOrdinal("AttemptMessage");
+            var mailJsonOrdinal = reader.GetOrdinal("MailJson");
+
+            while (reader.Read())
             {
-                connection.Open();
-
-                using (SqlCommand command = new SqlCommand(SelectQuery, connection))
+                try
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    list.Add(new MailQueueItem
                     {
-                        int mailQueueItemIdOrdinal = reader.GetOrdinal("MailQueueId");
-                        int dateOrdinal = reader.GetOrdinal("Date");
-                        int lastAttemptOrdinal = reader.GetOrdinal("LastAttempt");
-                        int attemptsOrdinal = reader.GetOrdinal("Attempts");
-                        int attemptMessageOrdinal = reader.GetOrdinal("AttemptMessage");
-                        int mailJsonOrdinal = reader.GetOrdinal("MailJson");
-
-                        while (reader.Read())
-                        {
-                            try
-                            {
-                                list.Add(new MailQueueItem
-                                {
-                                    MailQueueItemId = reader.GetInt64(mailQueueItemIdOrdinal),
-                                    AttemptMessage = reader.IsDBNull(attemptMessageOrdinal) ? null : reader.GetString(attemptMessageOrdinal),
-                                    Attempts = reader.GetInt32(attemptsOrdinal),
-                                    Date = reader.GetDateTime(dateOrdinal),
-                                    LastAttempt = reader.GetDateTime(lastAttemptOrdinal),
-                                    Mail = JsonConvert.DeserializeObject<SendGridMessage>(reader.GetString(mailJsonOrdinal)),
-                                });
-                            }
-                            catch (Exception ex)
-                            {
-                                MarkError(reader.GetInt64(mailQueueItemIdOrdinal), $"{ex.Message}\r\n{ex.StackTrace}", false, connection);
-                            }
-                        }
-                    }
+                        MailQueueItemId = reader.GetInt64(mailQueueItemIdOrdinal),
+                        AttemptMessage = reader.IsDBNull(attemptMessageOrdinal) ? null : reader.GetString(attemptMessageOrdinal),
+                        Attempts = reader.GetInt32(attemptsOrdinal),
+                        Date = reader.GetDateTime(dateOrdinal),
+                        LastAttempt = reader.GetDateTime(lastAttemptOrdinal),
+                        Mail = JsonConvert.DeserializeObject<SendGridMessage>(reader.GetString(mailJsonOrdinal)),
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MarkError(reader.GetInt64(mailQueueItemIdOrdinal), $"{ex.Message}\r\n{ex.StackTrace}", false, connection);
                 }
             }
         }
@@ -123,7 +122,7 @@ BEGIN CATCH
   ROLLBACK TRANSACTION [MoveTransaction]
 END CATCH";
 
-            using (SqlConnection connection = this.GetNewConnection())
+            using (var connection = this.GetNewConnection())
             {
                 connection.Open();
 
@@ -139,11 +138,9 @@ END CATCH";
 
     public void MarkError(long mailQueueItemId, string message)
     {
-        using (SqlConnection connection = this.GetNewConnection())
-        {
-            connection.Open();
-            MarkError(mailQueueItemId, message, true, connection);
-        }
+        using var connection = this.GetNewConnection();
+        connection.Open();
+        MarkError(mailQueueItemId, message, true, connection);
     }
 
     private static void MarkError(long mailQueueItemId, string message, bool needsLock, SqlConnection openConnection)

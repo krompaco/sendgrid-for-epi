@@ -1,68 +1,64 @@
-﻿namespace Krompaco.SendGridForEpi.ScheduledJobs
+﻿using System.Net;
+using System.Text;
+using EPiServer.PlugIn;
+using EPiServer.Scheduler;
+using Krompaco.SendGridForEpi.Helpers;
+using Krompaco.SendGridForEpi.Services;
+using SendGrid;
+
+namespace Krompaco.SendGridForEpi.ScheduledJobs;
+
+[ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
+public class MailServiceQueueJob : ScheduledJobBase
 {
-    using System;
-    using System.Net;
-    using System.Text;
+    private readonly IMailService mailService;
 
-    using EPiServer.PlugIn;
-    using EPiServer.Scheduler;
-    using Krompaco.SendGridForEpi.Helpers;
-    using SendGrid;
-    using Services;
+    private readonly ISendGridClient sendGridClient;
 
-    [ScheduledPlugIn(DisplayName = "Process SendGrid Mail Queue", GUID = "d979943a-28f7-407f-8584-73745f6110af", Description = "Processes queue and marks queue items as complete which in default implementation moves the item to a log archive.")]
-    public class MailServiceQueueJob : ScheduledJobBase
+    public MailServiceQueueJob(IMailService mailService, ISendGridClient sendGridClient)
     {
-        private readonly IMailService mailService;
+        this.mailService = mailService;
+        this.sendGridClient = sendGridClient;
+    }
 
-        public MailServiceQueueJob(IMailService mailService)
+    public override string Execute()
+    {
+        var queue = this.mailService.GetQueue();
+        var retrieved = queue.Count;
+        var sent = 0;
+        var failed = 0;
+
+        foreach (var mail in queue)
         {
-            this.mailService = mailService;
-        }
-
-        public override string Execute()
-        {
-            var config = new SendGridForEpi.Configuration();
-
-            var client = new SendGridClient(config.ApiKey);
-
-            var queue = this.mailService.GetQueue();
-            int retrieved = queue.Count;
-            int sent = 0;
-            int failed = 0;
-
-            foreach (var mail in queue)
+            try
             {
-                try
+                var response = AsyncHelper.RunSync(() => this.sendGridClient.SendEmailAsync(mail.Mail));
+
+                var body = AsyncHelper.RunSync(() => response.Body.ReadAsStringAsync());
+
+                var sb = new StringBuilder();
+                sb.AppendLine(response.StatusCode.ToString());
+                sb.AppendLine(body);
+                sb.AppendLine(response.Headers.ToString());
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
                 {
-                    var response = AsyncHelper.RunSync(() => client.SendEmailAsync(mail.Mail));
-
-                    var body = AsyncHelper.RunSync(() => response.Body.ReadAsStringAsync());
-
-                    var sb = new StringBuilder();
-                    sb.AppendLine(response.StatusCode.ToString());
-                    sb.AppendLine(body);
-                    sb.AppendLine(response.Headers.ToString());
-
-                    if (response.StatusCode == HttpStatusCode.Accepted)
-                    {
-                        this.mailService.MarkComplete(mail.MailQueueItemId);
-                        sent++;
-                    }
-                    else
-                    {
-                        failed++;
-                        this.mailService.MarkError(mail.MailQueueItemId, sb.ToString());
-                    }
+                    this.mailService.MarkComplete(mail.MailQueueItemId);
+                    sent++;
                 }
-                catch (Exception ex)
+                else
                 {
                     failed++;
-                    this.mailService.MarkError(mail.MailQueueItemId, string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                    this.mailService.MarkError(mail.MailQueueItemId, sb.ToString());
                 }
             }
-
-            return $"Processed: {retrieved}, posted: {sent}, failing: {failed}";
+            catch (Exception ex)
+            {
+                failed++;
+                this.mailService.MarkError(mail.MailQueueItemId, $"{ex.Message}\r\n{ex.StackTrace}");
+            }
         }
+
+        return $"Processed: {retrieved}, posted: {sent}, failing: {failed}";
     }
 }

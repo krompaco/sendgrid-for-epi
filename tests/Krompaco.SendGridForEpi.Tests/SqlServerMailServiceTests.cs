@@ -1,52 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Models;
+﻿using Krompaco.SendGridForEpi.Models;
+using Krompaco.SendGridForEpi.Services;
+using Krompaco.SendGridForEpi.SqlServer.Services;
 using SendGrid.Helpers.Mail;
-using SendGridForEpi.Services;
-using SqlServer.Services;
 
 namespace Krompaco.SendGridForEpi.Tests;
 
 public class SqlServerMailServiceTests
 {
+    private const string SqlServerConnectionString = "Data Source=.;Initial Catalog=krompaco-epi;Connection Timeout=60;Integrated Security=True;MultipleActiveResultSets=True;TrustServerCertificate=True";
+
     [Fact]
     public void TestSqlServerConnection()
     {
-        var service = new SqlServerService();
+        var service = new SqlServerMailService(SqlServerConnectionString);
         service.CreateTablesIfNeeded();
     }
 
     [Fact]
     public void TestSqlServerServiceQueueFlow()
     {
-        IMailService service = new SqlServerMailService();
+        IMailService service = new SqlServerMailService(SqlServerConnectionString);
 
         var item = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
         service.AddToQueue(item);
 
         var list = service.GetQueue();
 
-        Assert.IsTrue(list.Any());
+        Assert.NotEmpty(list);
 
-        Assert.AreEqual(item.Mail.TemplateId, list.First().Mail.TemplateId);
+        Assert.Equal(item.Mail.TemplateId, list.First().Mail?.TemplateId);
 
         var item2 = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
         service.AddToQueue(item2);
 
         list = service.GetQueue();
 
-        Assert.IsTrue(list.Count > 1);
+        Assert.True(list.Count > 1);
 
         service.MarkError(list.Last().MailQueueItemId, "Some error message.");
 
@@ -54,22 +53,22 @@ public class SqlServerMailServiceTests
 
         var previousCount = list.Count;
 
-        Assert.IsTrue(list.Any(x => x.AttemptMessage == "Some error message."));
+        Assert.Contains(list, x => x.AttemptMessage == "Some error message.");
 
         // Check that batching is working
         var item3 = new MailQueueItem
         {
             Mail = GetNewMailObject(),
-            Date = DateTime.UtcNow
+            Date = DateTime.UtcNow,
         };
 
-        for (int i = 2; i < 1101; i++)
+        for (var i = 2; i < 1101; i++)
         {
             item3.Mail.Personalizations.Add(
                     new Personalization()
                     {
                         Tos = new List<EmailAddress> { new EmailAddress($"somedude{i}@krompaco.nu") },
-                        Substitutions = new Dictionary<string, string> { { "{name}", $"Some Dude {i}" } }
+                        Substitutions = new Dictionary<string, string> { { "{name}", $"Some Dude {i}" } },
                     });
         }
 
@@ -77,13 +76,13 @@ public class SqlServerMailServiceTests
 
         list = service.GetQueue();
 
-        Assert.AreEqual(previousCount + 2, list.Count);
-        Assert.AreEqual(1000, list.Max(x => x.Mail.Personalizations.Count));
-        Assert.AreEqual(1, list.Count(x => x.Mail.Personalizations.Count == 100));
+        Assert.Equal(previousCount + 2, list.Count);
+        Assert.Equal(1000, list.Max(x => x.Mail?.Personalizations.Count));
+        Assert.Equal(1, list.Count(x => x.Mail?.Personalizations.Count == 100));
 
-        Assert.AreEqual("somedude1000@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 1000).Mail.Personalizations.Last().Tos.First().Email);
+        Assert.Equal("somedude1000@krompaco.nu", list.Single(x => x.Mail?.Personalizations.Count == 1000).Mail?.Personalizations.Last().Tos.First().Email);
 
-        Assert.AreEqual("somedude1001@krompaco.nu", list.Single(x => x.Mail.Personalizations.Count == 100).Mail.Personalizations.First().Tos.First().Email);
+        Assert.Equal("somedude1001@krompaco.nu", list.Single(x => x.Mail?.Personalizations.Count == 100).Mail?.Personalizations.First().Tos.First().Email);
 
         foreach (var m in list)
         {
@@ -92,7 +91,7 @@ public class SqlServerMailServiceTests
 
         list = service.GetQueue();
 
-        Assert.AreEqual(0, list.Count);
+        Assert.Empty(list);
     }
 
     private static SendGridMessage GetNewMailObject()
@@ -102,7 +101,7 @@ public class SqlServerMailServiceTests
             From = new EmailAddress("test@krompaco.nu", "Krompaco Test"),
             TemplateId = "6069c78d-c65b-4701-867f-16cf95ad5138",
             Subject = "Testing Krompaco åäö",
-            Personalizations = new List<Personalization>()
+            Personalizations = new List<Personalization>(),
         };
 
         var emails = new List<string> { "some.dude@krompaco.nu" };
@@ -113,7 +112,7 @@ public class SqlServerMailServiceTests
                 new Personalization()
                 {
                     Tos = new List<EmailAddress> { new EmailAddress(email) },
-                    Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } }
+                    Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } },
                 });
         }
 

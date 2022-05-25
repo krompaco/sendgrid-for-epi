@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using Extensions;
+﻿using System.Collections.Concurrent;
+using Krompaco.SendGridForEpi.Extensions;
 using Krompaco.SendGridForEpi.Models;
 using Krompaco.SendGridForEpi.Services;
 using Newtonsoft.Json;
@@ -12,21 +9,28 @@ namespace Krompaco.SendGridForEpi.Tests.Services;
 
 public class DummyMailService : IMailService
 {
-    private static readonly ConcurrentDictionary<long, MailQueueItem> Queue = new ConcurrentDictionary<long, MailQueueItem>();
+    private static readonly ConcurrentDictionary<long, MailQueueItem> Queue = new();
 
-    private static readonly ConcurrentDictionary<long, MailQueueItem> Archive = new ConcurrentDictionary<long, MailQueueItem>();
+    private static readonly ConcurrentDictionary<long, MailQueueItem> Archive = new();
 
     public void AddToQueue(MailQueueItem item)
     {
-        var personalizations = item.Mail.Personalizations.ToList();
+        var personalizations = item.Mail?.Personalizations.ToList() ?? new List<Personalization>();
 
         foreach (var batch in personalizations.SplitToBatches(1000))
         {
-            var itemToSave = new MailQueueItem();
+            var itemToSave = new MailQueueItem { Date = DateTime.UtcNow };
 
-            itemToSave.Date = DateTime.UtcNow;
-            itemToSave.Mail = JsonConvert.DeserializeObject<SendGridMessage>(item.Mail.Serialize());
-            itemToSave.Mail.Personalizations = batch.ToList();
+            if (item.Mail != null)
+            {
+                itemToSave.Mail = JsonConvert.DeserializeObject<SendGridMessage>(item.Mail.Serialize()) ?? new SendGridMessage();
+
+                if (itemToSave.Mail != null)
+                {
+                    itemToSave.Mail.Personalizations = batch.ToList();
+                }
+            }
+
             itemToSave.MailQueueItemId = Queue.Any() ? Queue.Max(x => x.Value.MailQueueItemId) + 1 : 1;
             itemToSave.LastAttempt = DateTime.UtcNow;
             itemToSave.Attempts++;
@@ -45,8 +49,7 @@ public class DummyMailService : IMailService
         var item = Queue[mailQueueItemId];
         Archive.TryAdd(mailQueueItemId, item);
 
-        MailQueueItem x;
-        Queue.TryRemove(mailQueueItemId, out x);
+        Queue.TryRemove(mailQueueItemId, out _);
     }
 
     public void MarkError(long mailQueueItemId, string message)
