@@ -12,10 +12,11 @@ This package will install both packages needed. Minimum Episerver version is 12.
 ## Configuration
 The main package requires you to have a SendGrid API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
 
-In `Startup.cs`and ConfigureServices, add these lines. Replace the connection string with the SQL Server database that you want to use.
+In `Startup.cs` and inside `ConfigureServices()`, add these lines. Replace the connection string with the SQL Server database that you want to use.
 
     services.AddSendGrid(options => { options.ApiKey = "your key that usually starts with SG."; });
-    var mailService = new SqlServerMailService("Data Source=(LocalDb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Alloy.Net6.mdf;Initial Catalog=Alloy.Net6;Integrated Security=True;Connect Timeout=30");
+    var mailService = new SqlServerMailService(
+      "Data Source=(LocalDb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Alloy.Net6.mdf;Initial Catalog=Alloy.Net6;Integrated Security=True;Connect Timeout=30");
     mailService.CreateTablesIfNeeded();
     services.AddSingleton<IMailService>(mailService);
 
