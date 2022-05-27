@@ -4,6 +4,16 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>Johan Kronberg</Authors>
+    <Company>Johan Kronberg</Company>
+    <Description>Service implementation for SQL Server. Queued SendGrid API POSTs for Optimizely Content Cloud CMS.</Description>
+    <Copyright>Copyright 2022 Johan Kronberg</Copyright>
+    <PackageProjectUrl>https://github.com/krompaco/sendgrid-for-epi</PackageProjectUrl>
+    <PackageReleaseNotes>.NET 6.0 support for EPiServer.CMS.Core 12.6.0 and newer.</PackageReleaseNotes>
+    <Version>2.0.2</Version>
+    <PackageIcon>package-image.png</PackageIcon>
+    <PackageTags>SendGrid;Mail;E-mail</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,12 +25,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\package-image.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
-    <PackageReference Include="SendGrid" Version="9.28.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="[4.0.0,5.0)" />
+    <PackageReference Include="SendGrid.Extensions.DependencyInjection" Version="[1.0.1,2.0)" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

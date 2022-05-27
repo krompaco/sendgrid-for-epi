@@ -111,7 +111,7 @@ public class SqlServerMailServiceTests
             mail.Personalizations.Add(
                 new Personalization()
                 {
-                    Tos = new List<EmailAddress> { new EmailAddress(email) },
+                    Tos = new List<EmailAddress> { new(email) },
                     Substitutions = new Dictionary<string, string> { { "{name}", "Some Dude" } },
                 });
         }
