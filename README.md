@@ -4,19 +4,22 @@ NuGet distributed packages for Episerver that handles async API-posting by a "lo
 ## Installation
 Packages are in Episerver's NuGet feed. If not set up go to Visual Studio => NuGet Package Manager => Package Sources => Add http://nuget.episerver.com/feed/packages.svc/
 
-    Install-Package Krompaco.SendGridForEpi.SqlServer
+Find and install the package `Krompaco.SendGridForEpi.SqlServer`
 
-This package will install both packages needed. Minimum Episerver version is 11.10.6 and SendGrid package is 9.10.0.
+This package will install both packages needed. Minimum Episerver version is 12.4.2 and SendGrid.Extensions.DependencyInjection package is 1.0.1.
 
 
 ## Configuration
-The main package requires you to add an app setting for the API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
+The main package requires you to have a SendGrid API Key. The key needs Mail Send Access and you set this up in Settings => API Keys in SendGrid.
 
-    <add key="sendgridforepi:ApiKey" value="Usually.SG.followed.by.quite.a.long.string" />
-   
-When using the Krompaco.SendGridForEpi.SqlServer package you have the option to use another connection string name than EPiServerDB. If not present or empty "EPiServerDB" will be used. Two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created on startup if not already present in the configured database.
+In `Startup.cs`and ConfigureServices, add these lines. Replace the connection string with the SQL Server database that you want to use.
 
-    <add key="sendgridforepi:SqlServerConnectionStringName" value="MyOwnDB" />
+    services.AddSendGrid(options => { options.ApiKey = "your key that usually starts with SG."; });
+    var mailService = new SqlServerMailService("Data Source=(LocalDb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Alloy.Net6.mdf;Initial Catalog=Alloy.Net6;Integrated Security=True;Connect Timeout=30");
+    mailService.CreateTablesIfNeeded();
+    services.AddSingleton<IMailService>(mailService);
+
+Two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created if they don't already exist.
 
 ## How it works
 You add SendGridMessage (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
