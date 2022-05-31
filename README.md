@@ -14,7 +14,7 @@ The main package requires you to have a SendGrid API Key. The key needs Mail Sen
 
 In `Startup.cs` and inside `ConfigureServices()`, add these lines. Replace the connection string with the SQL Server database that you want to use.
 
-In most cases you would have these secret values in environment variables and fetched through IConfiguration.
+In most cases you would have these secret values in environment variables and fetched through `IConfiguration`.
 
     services.AddSendGrid(options => { options.ApiKey = "your-key-that-usually-starts-with-SG."; });
     var mailService = new SqlServerMailService(
@@ -22,7 +22,7 @@ In most cases you would have these secret values in environment variables and fe
     mailService.CreateTablesIfNeeded();
     services.AddSingleton<IMailService>(mailService);
 
-Two tables named SendGridForEpiMailQueue and SendGridForEpiMailQueueArchive will be created if they don't already exist.
+Two tables named _SendGridForEpiMailQueue_ and _SendGridForEpiMailQueueArchive_ will be created if they don't already exist.
 
 ## How it works
 You add SendGridMessage (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
