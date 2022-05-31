@@ -25,7 +25,7 @@ In most cases you would have these secret values in environment variables and fe
 Two tables named _SendGridForEpiMailQueue_ and _SendGridForEpiMailQueueArchive_ will be created if they don't already exist.
 
 ## How it works
-You add SendGridMessage (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
+You add `SendGridMessage` (from the offical package) objects to a queue that is then processed and posted to the SendGrid API by a scheduled job. If error occurs job will try again next execution and log the number of attempts and latest error message.
 
 The implementation handles batching of more than 1000 personalizations internally so you don't need to think about that limit.
 
