@@ -14,7 +14,9 @@ The main package requires you to have a SendGrid API Key. The key needs Mail Sen
 
 In `Startup.cs` and inside `ConfigureServices()`, add these lines. Replace the connection string with the SQL Server database that you want to use.
 
-    services.AddSendGrid(options => { options.ApiKey = "your key that usually starts with SG."; });
+In most cases you would have these secret values in environment variables and fetched through IConfiguration.
+
+    services.AddSendGrid(options => { options.ApiKey = "your-key-that-usually-starts-with-SG."; });
     var mailService = new SqlServerMailService(
       "Data Source=(LocalDb)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Alloy.Net6.mdf;Initial Catalog=Alloy.Net6;Integrated Security=True;Connect Timeout=30");
     mailService.CreateTablesIfNeeded();
@@ -40,7 +42,7 @@ In the following example I have put the Subject line and the Body in SendGrid's 
         public string CommentText { get; set; }
     }
 
-In the SendGrid template I will use Handlebars to output the data above using {{whoIs}} and triple-stash for the HTML property {{{commentText}}}.
+In the SendGrid template I will use Handlebars to output the data above using `{{whoIs}}` and triple-stash for the HTML property `{{{commentText}}}`.
 
     var mail = new SendGridMessage
     {
@@ -69,7 +71,7 @@ In the SendGrid template I will use Handlebars to output the data above using {{
         Mail = mail
     });
 
-Assuming this code was in a Controller you would have gotten hold of the IMailService implementation in the constructor.
+Assuming this code was in a Controller you would have gotten hold of the `IMailService` implementation in the constructor.
 
     private readonly IMailService mailService;
     
@@ -77,3 +79,5 @@ Assuming this code was in a Controller you would have gotten hold of the IMailSe
     {
         this.mailService = mailService;
     }
+
+Then find the scheduled job _Process SendGrid Mail Queue_ and set it to run every minute or whatever you feel would be appropriate.
